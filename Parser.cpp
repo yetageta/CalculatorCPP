@@ -87,12 +87,12 @@ void Parser::ParseParentheses()
 
 			for (std::list<Token>::iterator i = tokens.begin(); i != tokens.end(); i++)
 			{
-				if (iterator < positionStart || iterator > positionEnd || iterator == globalIterator - 1) {
+				if (iterator < positionStart || iterator > positionEnd) {
 					newTokenList.push_back(*i);
-					if (iterator == globalIterator - 1) {
-						newTokenInNewList = &newTokenList.back();
-
-					}
+				}
+				if (iterator == positionStart) {
+					newTokenList.push_back(*i);
+					newTokenInNewList = &newTokenList.back();
 				}
 				iterator += 1;
 			}

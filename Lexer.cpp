@@ -29,34 +29,52 @@ void Lexer::ParseString(std::string str)
 			break;
 		}
 	}
+
 }
 
 void Lexer::InsertMultiplication() {
 	Token multiplicationToken = {};
 	multiplicationToken.type = TokenType::MULTIPLICATION;
 	tokens.push_back(multiplicationToken);
-	pos -= 1;
 }
 
 Token Lexer::GetToken()
 {
 	Token newToken = {};
 	Token lastToken = {};
+	std::list<Token>::iterator it;
 
 	if (pos > 0) {
 		lastToken = tokens.back();
+		it = tokens.end();
 	}
 
 	switch (input[pos])
 	{
 	case '(': {
 			if (lastToken.type == TokenType::FLOAT && pos > 0) {
-				//InsertMultiplication();
+				InsertMultiplication();
 			};
 			newToken.type = TokenType::LPAREN;
 			break;
 		}
-	case ')': newToken.type = TokenType::RPAREN; break;
+	case ')': {
+		newToken.type = TokenType::RPAREN; 
+
+		it = std::prev(it, 2);
+
+		if (lastToken.type == TokenType::FLOAT && it->type == TokenType::LPAREN) {
+			newToken.type = TokenType::FLOAT;
+			newToken.content = lastToken.content;
+
+			tokens.erase(it);
+			it = tokens.end();
+			it = std::prev(it);
+			tokens.erase(it);
+		}
+
+		break;
+		}
 	case '*': newToken.type = TokenType::MULTIPLICATION; break;
 	case '/': newToken.type = TokenType::DIVISION; break;
 	case '+': newToken.type = TokenType::PLUS; break;
