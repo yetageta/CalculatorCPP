@@ -60,9 +60,10 @@ void Parser::ParseParentheses()
 
 	int countLeft = 0, countRight = 0;
 	int positionStart = 0, positionEnd = 0;
-
-
 	int globalIterator = 0;
+
+	Token nextToken{};
+
 	for (auto& token : tokens) {
 		if (token.type == TokenType::LPAREN) {
 			countLeft += 1;
@@ -71,8 +72,13 @@ void Parser::ParseParentheses()
 		if (token.type == TokenType::RPAREN) {
 			countRight += 1;
 		}
+		std::list<Token>::iterator iterator = tokens.begin();
+		std::next(iterator, globalIterator);
+		nextToken = *iterator;
 
-		if (countLeft == countRight && countLeft > 0) {
+		bool earlyRightParen = nextToken.type != TokenType::RPAREN && (countLeft > countRight && countRight > 0);
+
+		if ((countLeft == countRight || earlyRightParen) && countLeft > 0) {
 
 			positionStart = GetPositionOfToken(tokens, **std::next(LeftPars.begin(), countLeft-1));
 			positionEnd = GetPositionOfToken(tokens, **RightPars.begin());

@@ -14,6 +14,7 @@ int main()
 }
 
 void run_calculation() {
+    std::cout << "Enter a calculation to solve: ";
     std::string code;
     std::cin >> code;
 
