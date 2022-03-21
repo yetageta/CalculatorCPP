@@ -17,6 +17,13 @@ bool isNonStringToken(char letter) {
 	return false;
 }
 
+bool isOperator(TokenType type) {
+	if (type == TokenType::MULTIPLICATION || type == TokenType::DIVISION || type == TokenType::PLUS || type == TokenType::MINUS) {
+		return true;
+	}
+	return false;
+}
+
 void Lexer::ParseString(std::string str)
 {
 	input = str;
@@ -94,7 +101,20 @@ Token Lexer::GetToken()
 
 				pos += 1;
 			}
+
 			pos -= 1;
+
+		} else { break; }
+
+		if (pos >= 3) {
+			it = tokens.end();
+			it = std::prev(it, 2);
+			if (isOperator(it->type) && lastToken.type == TokenType::MINUS) {
+				newToken.content = '-' + newToken.content;
+				it = tokens.end();
+				it = std::prev(it, 1);
+				tokens.erase(it);
+			}
 		}
 	}
 
